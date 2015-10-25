@@ -15,19 +15,19 @@ type Logger struct {
 
 // PreDispatch wraps the http.ResponseWriter with a new LoggerWritter
 // so we can log information about the response.
-func (l *Logger) PreDispatch() error {
-	l.Context.Response = &LoggerWriter{
-		Writer: l.Context.Response,
+func (l *Logger) PreDispatch(c *yarf.Context) error {
+	c.Response = &LoggerWriter{
+		Writer: c.Response,
 	}
 
 	return nil
 }
 
-func (l *Logger) PostDispatch() error {
+func (l *Logger) PostDispatch(c *yarf.Context) error {
 	// If nobody sets the status code, it's a 200
 	var code int
-	if _, ok := l.Context.Response.(*LoggerWriter); ok {
-		code = l.Context.Response.(*LoggerWriter).StatusCode
+	if _, ok := c.Response.(*LoggerWriter); ok {
+		code = c.Response.(*LoggerWriter).StatusCode
 	}
 
 	if code == 0 {
@@ -36,11 +36,11 @@ func (l *Logger) PostDispatch() error {
 
 	log.Printf(
 		"| %s | %s | %d | %s | %s ",
-		l.GetClientIP(),
-		l.Context.Request.Method,
+		c.GetClientIP(),
+		c.Request.Method,
 		code,
-		l.Context.Request.URL.String(),
-		l.Context.Params.Encode(),
+		c.Request.URL.String(),
+		c.Params.Encode(),
 	)
 
 	return nil

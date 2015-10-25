@@ -12,18 +12,18 @@ type Gzip struct {
 }
 
 // PreDispatch
-func (m *Gzip) PreDispatch() error {
+func (m *Gzip) PreDispatch(c *yarf.Context) error {
 	// Check request header
-	if !strings.Contains(m.Context.Request.Header.Get("Accept-Encoding"), "gzip") {
+	if !strings.Contains(c.Request.Header.Get("Accept-Encoding"), "gzip") {
 		return nil
 	}
 
 	// Set encoding header
-	m.Context.Response.Header().Set("Content-Encoding", "gzip")
+	c.Response.Header().Set("Content-Encoding", "gzip")
 
 	// Wrap response writer
-	m.Context.Response = &GzipWriter{
-		Writer: m.Context.Response,
+	c.Response = &GzipWriter{
+		Writer: c.Response,
 	}
 
 	return nil
