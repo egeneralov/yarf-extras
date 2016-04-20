@@ -30,33 +30,33 @@ func initStorage() {
 	if s == nil {
 		s = new(authStorage)
 		s.store = make(map[string]authToken)
-		
+
 		go garbageCollector()
 	}
 }
 
 func garbageCollector() {
-    // Run every 5 minutes. 
-    t := time.NewTicker(5 * time.Minute)
-    
-    for _ = range t.C {
-        // Cancel when storage not present
-        if s == nil {
-            t.Stop()
-            return
-        }
-        
-        // Check for expired storage entries.
-        now := time.Now()
-        
-        s.Lock()
-        for token, data := range s.store {
-            if data.expiration.After(now) {
-                delete(s.store, token)
-            }
-        }
-        s.Unlock()
-    }
+	// Run every 5 minutes.
+	t := time.NewTicker(5 * time.Minute)
+
+	for _ = range t.C {
+		// Cancel when storage not present
+		if s == nil {
+			t.Stop()
+			return
+		}
+
+		// Check for expired storage entries.
+		now := time.Now()
+
+		s.Lock()
+		for token, data := range s.store {
+			if data.expiration.After(now) {
+				delete(s.store, token)
+			}
+		}
+		s.Unlock()
+	}
 }
 
 func generateToken() string {
@@ -120,8 +120,8 @@ func NewToken(id string, d int) string {
 // GetToken tries to retrieve the token from the request object.
 // If the token is not found, returns an empty string.
 func GetToken(r *http.Request) string {
-    var token string
-    
+	var token string
+
 	// First try the cookie method
 	cookie, err := r.Cookie("Auth")
 	if err != nil {
@@ -130,7 +130,7 @@ func GetToken(r *http.Request) string {
 	} else {
 		token = cookie.Value
 	}
-	
+
 	return token
 }
 
@@ -152,10 +152,10 @@ func ValidateToken(token string) (string, error) {
 }
 
 func DeleteToken(token string) {
-    initStorage()
-    
-    s.Lock()
+	initStorage()
+
+	s.Lock()
 	defer s.Unlock()
-	
+
 	delete(s.store, token)
 }

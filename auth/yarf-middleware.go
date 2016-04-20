@@ -23,7 +23,7 @@ func (a *Auth) PreDispatch(c *yarf.Context) error {
 
 	c.Data.Set("_authData", data)
 	c.Data.Set("_authToken", token)
-	
+
 	// Refresh token expiration on every request.
 	refreshToken(token)
 
