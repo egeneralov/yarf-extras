@@ -30,4 +30,3 @@ func (gzw *GzipWriter) Write(content []byte) (int, error) {
 	// Write gzip bytes
 	return gz.Write(content)
 }
-

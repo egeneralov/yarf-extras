@@ -1,8 +1,8 @@
 package gzip
 
 import (
-    "github.com/yarf-framework/yarf"
-    "strings"
+	"github.com/yarf-framework/yarf"
+	"strings"
 )
 
 // Gzip middleware automatically handles gzip compressed responses to clients that accepts the encoding.

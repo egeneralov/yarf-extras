@@ -1,8 +1,8 @@
 package logger
 
 import (
-    "github.com/yarf-framework/yarf"
-    "log"
+	"github.com/yarf-framework/yarf"
+	"log"
 )
 
 // Logger middleware it's a simple log module that uses the default golang's log package.
