@@ -21,8 +21,8 @@ type authStorage struct {
 }
 
 type authToken struct {
-	data       string    // Any data
-	duration   int       // Seconds
+	data       string    // Any data you want to save for this token.
+	duration   int       // Seconds. Stored to be used by the RefreshToken function.
 	expiration time.Time // Expiration time calculated after duration
 }
 
