@@ -1,6 +1,6 @@
 package auth
 
-type UnauthorizedError struct {}
+type UnauthorizedError struct{}
 
 // Implements the error interface returning the ErrorMsg value of each error.
 func (e *UnauthorizedError) Error() string {
