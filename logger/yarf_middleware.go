@@ -23,7 +23,7 @@ func (l *Logger) PreDispatch(c *yarf.Context) error {
 	return nil
 }
 
-func (l *Logger) PostDispatch(c *yarf.Context) error {
+func (l *Logger) End(c *yarf.Context) error {
 	// If nobody sets the status code, it's a 200
 	var code int
 	if _, ok := c.Response.(*LoggerWriter); ok {

@@ -18,7 +18,7 @@ func (a *Auth) PreDispatch(c *yarf.Context) error {
 
 	data, err := ValidateToken(token)
 	if err != nil {
-		return err
+		return new(UnauthorizedError)
 	}
 
 	c.Data.Set("_authData", data)
