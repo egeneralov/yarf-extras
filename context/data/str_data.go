@@ -15,7 +15,7 @@ func (sd *StrData) Get(key string) (interface{}, error) {
 		sd.data = url.Values{}
 	}
 
-	return sd.data.Get("key"), nil
+	return sd.data.Get(key), nil
 }
 
 // Set saves a data item under a key name.
@@ -23,7 +23,7 @@ func (sd *StrData) Set(key string, data interface{}) error {
 	if sd.data == nil {
 		sd.data = url.Values{}
 	}
-
+    
 	sd.data.Set(key, data.(string))
 
 	return nil
