@@ -1,5 +1,6 @@
 package auth
 
+// UnauthorizedError is the custom error type returned by the Auth middleware to be compatible with Yarf's YError
 type UnauthorizedError struct{}
 
 // Implements the error interface returning the ErrorMsg value of each error.

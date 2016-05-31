@@ -138,7 +138,7 @@ func ValidateToken(token string) (string, error) {
 }
 
 // RefreshToken resets the timer of the token to extend its valid status.
-// It sets the same expiration time as when it was created, but starting now. 
+// It sets the same expiration time as when it was created, but starting now.
 func RefreshToken(token string) {
 	initStorage()
 
