@@ -67,7 +67,7 @@ func (sr *SomeResource) Get(c *yarf.Context) error {
 ```
 
 
-## Set Yarf middleware
+### Set Yarf middleware
 
 ```go
 import (
