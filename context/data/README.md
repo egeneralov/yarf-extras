@@ -1,3 +1,5 @@
+[![GoDoc](https://godoc.org/github.com/yarf-framework/extras/context/data?status.svg)](https://godoc.org/github.com/yarf-framework/extras/context/data)
+
 ## Context Data
 
 Custom yarf.ContextData implementation package that works with strings. 

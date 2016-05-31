@@ -6,6 +6,7 @@ import (
 )
 
 // StrData implements the yarf.ContextData interface to be used as a simple string storage.
+// All interface{} values passed through this methods are treated as strings.
 type StrData struct {
 	data url.Values
 

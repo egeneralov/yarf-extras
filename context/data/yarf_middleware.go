@@ -9,6 +9,7 @@ type SetStrData struct {
 	yarf.Middleware
 }
 
+// PreDispatch creates the StrData object and sets it on the Context.Data property.
 func (m *SetStrData) PreDispatch(c *yarf.Context) error {
 	c.Data = new(StrData)
 
