@@ -75,20 +75,6 @@ func generateToken() string {
 	return fmt.Sprintf("%x", h) // Encode the right UTF-8 bytes.
 }
 
-func refreshToken(token string) {
-	initStorage()
-
-	s.Lock()
-	defer s.Unlock()
-
-	if t, ok := s.store[token]; ok {
-		if t.expiration.After(time.Now()) {
-			t.expiration = time.Now().Add(time.Duration(s.store[token].duration) * time.Second)
-			s.store[token] = t
-		}
-	}
-}
-
 // NewToken creates and stores a new token on the local storage.
 // It associates a token to an id so it can be identified and returned by the ValidateToken method.
 // It should be used from a Login method after a successful authentication.
@@ -151,6 +137,23 @@ func ValidateToken(token string) (string, error) {
 	return "", errors.New("Invalid token")
 }
 
+// RefreshToken resets the timer of the token to extend its valid status.
+// It sets the same expiration time as when it was created, but starting now. 
+func RefreshToken(token string) {
+	initStorage()
+
+	s.Lock()
+	defer s.Unlock()
+
+	if t, ok := s.store[token]; ok {
+		if t.expiration.After(time.Now()) {
+			t.expiration = time.Now().Add(time.Duration(s.store[token].duration) * time.Second)
+			s.store[token] = t
+		}
+	}
+}
+
+// DeleteToken removes the token data from the storage.
 func DeleteToken(token string) {
 	initStorage()
 
