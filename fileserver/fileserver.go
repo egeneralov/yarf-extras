@@ -40,12 +40,9 @@ func New(path, prefix string) *yarf.Yarf {
 	// Init server
 	y := yarf.New()
 
-	// Init resource
-	f := new(File)
-	f.Path = path
-	f.Prefix = prefix
+	// Set follow to file server
+	y.Follow = http.StripPrefix(prefix, http.FileServer(http.Dir(path)))
 
-	y.Add("/", f)
-
+	// Return without routes.
 	return y
 }
