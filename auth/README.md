@@ -6,6 +6,18 @@ Super-simple, yet secure, token-based auth package for Go's http.Request.
 Compatible with Yarf framework, includes Middleware ready to insert into your Yarf router. 
 
 
+## Tokens
+
+Tokens are generated from calculating the SHA512 hash from 256 bytes randomly generated and returned as a string encoded in UTF-8.
+The result is a 128 characters long string all lower case representing the hash like: 
+
+```
+b6e184525010a39057878fb7d7eca73c39dde0ac8b2bcff26acd71034e5922d6b5a9e30923d5d35482df396e11e57df9adc085cdd47cd2b1095b1d2880f38d01
+```
+
+
+## Examples
+
 ### Create token:
 
 ```go
