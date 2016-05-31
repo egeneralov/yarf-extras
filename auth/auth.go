@@ -104,6 +104,8 @@ func NewToken(id string, d int) string {
 }
 
 // GetToken tries to retrieve the token from the request object.
+// It looks for the value of a request cookie named "Auth" first,
+// and then for the value of a request header named "Auth" to retrieve the first value found:
 // If the token is not found, returns an empty string.
 func GetToken(r *http.Request) string {
 	var token string
