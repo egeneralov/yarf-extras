@@ -15,7 +15,7 @@ type Auth struct {
 // If a token is valid, it returns its data on the "Auth" index of the yarf.Context.Data object.
 func (a *Auth) PreDispatch(c *yarf.Context) error {
 	token := GetToken(c.Request)
-	
+
 	data, err := ValidateToken(token)
 	if err != nil {
 		return new(UnauthorizedError)
