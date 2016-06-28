@@ -37,7 +37,7 @@ func initStorage() {
 
 func garbageCollector() {
 	// Run every 5 minutes.
-	t := time.NewTicker(5 * time.Minute)
+	t := time.NewTicker(1 * time.Minute)
 
 	for _ = range t.C {
 		// Cancel when storage not present
@@ -51,7 +51,7 @@ func garbageCollector() {
 
 		s.Lock()
 		for token, data := range s.store {
-			if data.expiration.After(now) {
+			if now.After(data.expiration) {
 				delete(s.store, token)
 			}
 		}
