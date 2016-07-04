@@ -2,6 +2,7 @@ package tpl
 
 import (
 	"github.com/yarf-framework/yarf"
+	"strings"
 )
 
 // ViewResource implements only GET Yarf resource method.
@@ -37,7 +38,7 @@ func (v *ViewResource) Render(c *yarf.Context) error {
 		return yarf.ErrorNotFound()
 	}
 
-	content, err := v.Cached(v.TplPath + "/" + v.TplName + "/view" + c.Request.URL.EscapedPath() + ".tpl")
+	content, err := v.Cached(v.TplPath + "/" + v.TplName + "/view" + strings.TrimSuffix(c.Request.URL.EscapedPath(), "/") + ".tpl")
 	if err != nil {
 		return yarf.ErrorNotFound()
 	}
@@ -47,15 +48,9 @@ func (v *ViewResource) Render(c *yarf.Context) error {
 		return yarf.ErrorNotFound()
 	}
 
-	end, err := v.Cached(v.TplPath + "/" + v.TplName + "/layout/end.tpl")
-	if err != nil {
-		return yarf.ErrorNotFound()
-	}
-
 	c.Render(pre)
 	c.Render(content)
 	c.Render(post)
-	c.Render(end)
 
 	return nil
 }
