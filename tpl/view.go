@@ -40,11 +40,11 @@ func (v *ViewResource) Render(c *yarf.Context) error {
 
 	content, err := v.Cached(v.TplPath + "/" + v.TplName + "/view" + strings.TrimSuffix(c.Request.URL.EscapedPath(), "/") + ".tpl")
 	if err != nil {
-	    // Try index.tpl
-	    content, err = v.Cached(v.TplPath + "/" + v.TplName + "/view" + strings.TrimSuffix(c.Request.URL.EscapedPath(), "/") + "/index.tpl")
-	    if err != nil {
-		    return yarf.ErrorNotFound()
-	    }
+		// Try index.tpl
+		content, err = v.Cached(v.TplPath + "/" + v.TplName + "/view" + strings.TrimSuffix(c.Request.URL.EscapedPath(), "/") + "/index.tpl")
+		if err != nil {
+			return yarf.ErrorNotFound()
+		}
 	}
 
 	post, err := v.Cached(v.TplPath + "/" + v.TplName + "/layout/post.tpl")

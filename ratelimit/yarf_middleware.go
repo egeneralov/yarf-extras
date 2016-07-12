@@ -34,40 +34,39 @@ func (e *YarfError) Body() string {
 	return "Too Many Requests: Try again later."
 }
 
-
 // RateLimiter middleware provides request rate limits per IP
 type RateLimiter struct {
 	yarf.Middleware
-	
+
 	// rate limiter
 	rl *RateLimit
 }
 
 func YarfMiddleware(limit, window int64) *RateLimiter {
-    return &RateLimiter {
-        rl: New(limit, window),
-    }
+	return &RateLimiter{
+		rl: New(limit, window),
+	}
 }
 
 func (m *RateLimiter) PreDispatch(c *yarf.Context) error {
-    // IP as key
-    key := c.GetClientIP()
-    
-    // Count
-    err := m.rl.Count(key)
-    if err != nil {
-        if _, ok := err.(RateLimitError); ok {
-            return &YarfError{}
-        } 
-         
-        return err
-    }
-    
-    // Set rate limit info on headers
-    rate := m.rl.Get(key)
-    c.Response.Header().Set("X-RateLimit-Limit", strconv.Itoa(int(rate.Limit)))
-    c.Response.Header().Set("X-RateLimit-Remaining", strconv.Itoa(int(rate.Limit - rate.EventCount)))
-    c.Response.Header().Set("X-RateLimit-Reset", strconv.Itoa(int(rate.Start.Add(time.Second * time.Duration(rate.Window)).Unix())))
-    
+	// IP as key
+	key := c.GetClientIP()
+
+	// Count
+	err := m.rl.Count(key)
+	if err != nil {
+		if _, ok := err.(RateLimitError); ok {
+			return &YarfError{}
+		}
+
+		return err
+	}
+
+	// Set rate limit info on headers
+	rate := m.rl.Get(key)
+	c.Response.Header().Set("X-RateLimit-Limit", strconv.Itoa(int(rate.Limit)))
+	c.Response.Header().Set("X-RateLimit-Remaining", strconv.Itoa(int(rate.Limit-rate.EventCount)))
+	c.Response.Header().Set("X-RateLimit-Reset", strconv.Itoa(int(rate.Start.Add(time.Second*time.Duration(rate.Window)).Unix())))
+
 	return nil
 }
