@@ -42,14 +42,14 @@ func (r *Rate) Count() error {
 		r.Start = time.Now()
 		r.EventCount = 0
 	}
-
+    
+    // Count
+	r.EventCount++
+	
 	// Block
 	if r.EventCount >= r.Limit {
 		return RateLimitError{}
 	}
-
-	// Count
-	r.EventCount++
 
 	// Continue
 	return nil
@@ -131,30 +131,28 @@ func (rl *RateLimit) Count(key string) error {
 func (rl *RateLimit) gc() {
 	// 10 times the window + 1
 	t := time.NewTicker(time.Duration((rl.Window+1)*10) * time.Second)
+	defer func(t *time.Ticker, rl *RateLimit) {
+	    t.Stop()
+		rl.gcActive = false
+    }(t, rl)
 
 	for _ = range t.C {
 		// Cancel when storage not present
 		if rl.counter == nil {
-			t.Stop()
-			rl.gcActive = false
 			return
 		}
 
 		// Check for expired entries.
 		now := time.Now()
 
-		// Read lock
-		rl.RLock()
-		defer rl.RUnlock()
-
+        // Write lock
+		rl.Lock()
 		for key, rate := range rl.counter {
 			// Expired 2 windows ago.
 			if now.After(rate.Start.Add(time.Second * time.Duration(rate.Window*2))) {
-				// Write lock
-				rl.Lock()
 				delete(rl.counter, key)
-				rl.Unlock()
 			}
 		}
+		rl.Unlock()
 	}
 }

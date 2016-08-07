@@ -35,12 +35,11 @@ func (l *Logger) End(c *yarf.Context) error {
 	}
 
 	log.Printf(
-		"| %s | %s | %d | %s | %s ",
+		"| %s | %s | %d | %s",
 		c.GetClientIP(),
 		c.Request.Method,
 		code,
 		c.Request.URL.String(),
-		c.Params.Encode(),
 	)
 
 	return nil

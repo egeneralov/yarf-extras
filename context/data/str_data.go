@@ -1,14 +1,14 @@
 package data
 
 import (
-	"net/url"
+	"github.com/yarf-framework/yarf"
 	"sync"
 )
 
 // StrData implements the yarf.ContextData interface to be used as a simple string storage.
 // All interface{} values passed through this methods are treated as strings.
 type StrData struct {
-	data url.Values
+	data yarf.Params
 
 	// Sync Mutex
 	sync.RWMutex
@@ -20,7 +20,7 @@ func (sd *StrData) Get(key string) (interface{}, error) {
 	defer sd.Unlock()
 
 	if sd.data == nil {
-		sd.data = url.Values{}
+		sd.data = yarf.Params{}
 	}
 
 	return sd.data.Get(key), nil
@@ -32,7 +32,7 @@ func (sd *StrData) Set(key string, data interface{}) error {
 	defer sd.Unlock()
 
 	if sd.data == nil {
-		sd.data = url.Values{}
+		sd.data = yarf.Params{}
 	}
 
 	sd.data.Set(key, data.(string))
@@ -46,7 +46,7 @@ func (sd *StrData) Del(key string) error {
 	defer sd.Unlock()
 
 	if sd.data == nil {
-		sd.data = url.Values{}
+		sd.data = yarf.Params{}
 	}
 
 	sd.data.Del(key)
