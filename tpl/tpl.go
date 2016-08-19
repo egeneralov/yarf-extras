@@ -13,8 +13,9 @@ type Tpl struct {
 	// Custom template name used to build the complete path
 	TplName string
 
-	// cache
-	cache map[string]string
+	// Cache
+	UseCache bool
+	cache    map[string]string
 
 	// Sync Mutex
 	sync.RWMutex
@@ -26,11 +27,11 @@ func (t *Tpl) Cached(path string) (string, error) {
 	t.Lock()
 	defer t.Unlock()
 
-	if t.cache == nil {
+	if t.UseCache && t.cache == nil {
 		t.cache = make(map[string]string)
 	}
 
-	if _, ok := t.cache[path]; !ok {
+	if _, ok := t.cache[path]; !ok || !t.UseCache {
 		data, err := ioutil.ReadFile(path)
 		if err != nil {
 			return "", err
