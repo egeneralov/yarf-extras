@@ -37,9 +37,6 @@ func (t *Tpl) Cached(path string) (string, error) {
 			return "", err
 		}
 
-		// Debug. Avoid caching
-		return string(data), nil
-
 		t.cache[path] = string(data)
 	}
 

@@ -13,3 +13,8 @@ Compatible with Yarf framework, includes Middleware ready to insert into your Ya
 
 Custom yarf.ContextData implementation package that works with strings. 
 Includes a Yarf Middleware used to set the yarf.Data object automatically.
+
+
+## [Rate Limit](https://github.com/yarf-framework/extras/tree/master/ratelimit)
+
+Simple Rate Limiter for your http requests. 

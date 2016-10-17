@@ -14,7 +14,7 @@ type ViewResource struct {
 	yarf.Resource
 }
 
-// NewLayoutMiddleware() constructs and sets up a new LayoutMiddleware object.
+// NewViewResource() constructs and sets up a new ViewResource object.
 // It uses the path and name string parameters to fill the corresponding object properties.
 func NewViewResource(path, name string) *ViewResource {
 	if name == "" {
@@ -55,7 +55,7 @@ func (v *ViewResource) Render(c *yarf.Context) error {
 	c.Render(pre)
 	c.Render(content)
 	c.Render(post)
-
+    
 	return nil
 }
 
