@@ -44,7 +44,7 @@ type RateLimiter struct {
 
 // YarfMiddleware constructor receives the requests limit and a time window (in seconds) to allow. 
 // Any IP that requests more than the limit within the time window will be blocked until the time window ends and a new one starts.  
-func YarfMiddleware(limit, window int64) *RateLimiter {
+func YarfMiddleware(limit, window int) *RateLimiter {
 	return &RateLimiter{
 		rl: New(limit, window),
 	}
@@ -67,8 +67,8 @@ func (m *RateLimiter) PreDispatch(c *yarf.Context) error {
 
 	// Set rate limit info on headers
 	rate := m.rl.Get(key)
-	c.Response.Header().Set("X-RateLimit-Limit", strconv.Itoa(int(rate.Limit)))
-	c.Response.Header().Set("X-RateLimit-Remaining", strconv.Itoa(int(rate.Limit-rate.EventCount)))
+	c.Response.Header().Set("X-RateLimit-Limit", strconv.Itoa(rate.Limit))
+	c.Response.Header().Set("X-RateLimit-Remaining", strconv.Itoa(rate.Limit-rate.EventCount))
 	c.Response.Header().Set("X-RateLimit-Reset", strconv.Itoa(int(rate.Start.Add(time.Second*time.Duration(rate.Window)).Unix())))
 
 	return nil

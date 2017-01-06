@@ -3,6 +3,8 @@ package auth
 import (
 	"net/http"
 	"testing"
+	"time"
+	"strconv"
 )
 
 func TestNewToken(t *testing.T) {
@@ -49,3 +51,37 @@ func TestDeleteToken(t *testing.T) {
 		t.Error("Token still valid after delete: " + data)
 	}
 }
+
+func TestConcurrentAccess(t *testing.T) {
+    for i:= 0; i < 1000; i++ {
+        go func() {
+            token := NewToken(strconv.Itoa(int(time.Now().UnixNano())), 3600)
+            ValidateToken(token)
+            RefreshToken(token)
+            DeleteToken(token)
+        }()
+    }
+}
+
+func BenchmarkNewToken(b *testing.B) {
+    for n := 0; n < b.N; n++ {
+        NewToken("data", 60)
+    }
+}
+
+func BenchmarkValidateToken(b *testing.B) {
+    token := NewToken(strconv.Itoa(int(time.Now().UnixNano())), 3600)
+    
+    for n := 0; n < b.N; n++ {
+        ValidateToken(token)
+    }
+}
+
+func BenchmarkRefreshToken(b *testing.B) {
+    token := NewToken(strconv.Itoa(int(time.Now().UnixNano())), 3600)
+    
+    for n := 0; n < b.N; n++ {
+        RefreshToken(token)
+    }
+}
+

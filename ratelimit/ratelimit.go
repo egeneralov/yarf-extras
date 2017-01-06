@@ -16,13 +16,13 @@ func (e RateLimitError) Error() string {
 // Its used internally by RateLimit to count different keys.
 type Rate struct {
 	// Amount of events allowed in a given window
-	Limit int64
+	Limit int
 
 	// Time window in seconds to limit
-	Window int64
+	Window int
 
 	// Actual count
-	EventCount int64
+	EventCount int
 
 	// Start time
 	Start time.Time
@@ -57,10 +57,10 @@ func (r *Rate) Count() error {
 
 type RateLimit struct {
 	// Amount of events allowed in a given window
-	Limit int64
+	Limit int
 
 	// Time window in seconds to limit
-	Window int64
+	Window int
 
 	// Count storage
 	counter map[string]*Rate
@@ -72,7 +72,7 @@ type RateLimit struct {
 	gcActive bool
 }
 
-func New(limit, window int64) *RateLimit {
+func New(limit, window int) *RateLimit {
 	return &RateLimit{
 		Limit:    limit,
 		Window:   window,

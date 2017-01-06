@@ -16,6 +16,12 @@ b6e184525010a39057878fb7d7eca73c39dde0ac8b2bcff26acd71034e5922d6b5a9e30923d5d354
 ```
 
 
+## Storage
+
+The package uses an internal storage engine that consists in a in-memory (volatile) map.
+Check the Storage interface to implement your own storage.
+
+
 ## Examples
 
 ### Create token:
@@ -63,6 +69,24 @@ func (sr *SomeResource) Get(c *yarf.Context) error {
     auth.RefreshToken(token)
     
     //...
+}
+```
+
+
+### Custom storage
+
+```go
+import (
+    "github.com/yarf-framework/extras/auth"
+)
+
+func SomeInitMethod() {
+    // ...
+    
+    myStore := new(MyCustomStorageEngine)
+    auth.RegisterStorage(myStore)
+    
+    // ...
 }
 ```
 
