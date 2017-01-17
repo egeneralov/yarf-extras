@@ -5,6 +5,7 @@ import (
 	"testing"
 	"time"
 	"strconv"
+	"sync"
 )
 
 func TestNewToken(t *testing.T) {
@@ -53,14 +54,28 @@ func TestDeleteToken(t *testing.T) {
 }
 
 func TestConcurrentAccess(t *testing.T) {
-    for i:= 0; i < 1000; i++ {
+    var wg sync.WaitGroup
+    
+    for i:= 0; i < 5000; i++ {
+        // Count goroutines
+        wg.Add(1)
+        
         go func() {
-            token := NewToken(strconv.Itoa(int(time.Now().UnixNano())), 3600)
+            // Decrement goroutines count
+            defer wg.Done()
+            
+            // Go full token process
+            token := NewToken(strconv.Itoa(int(time.Now().UnixNano())), 1)
             ValidateToken(token)
             RefreshToken(token)
             DeleteToken(token)
+            
+            time.Sleep(2 * time.Second)
         }()
     }
+    
+    // Wait for all goroutines to finish
+    wg.Wait()
 }
 
 func BenchmarkNewToken(b *testing.B) {

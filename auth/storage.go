@@ -65,15 +65,13 @@ func (as *authStorage) gc() {
 		as.RLock()
 		for key, data := range as.store {
 			if now.After(data.expiration) {
-			    // Switch form read lock to full lock to delete expired data.
+			    // Turn off read lock while deleting.
 			    as.RUnlock()
-			    as.Lock()
 				
 				// Delete
 				as.Del(key)
 				
-				// Switch lock back.
-				as.Unlock()
+				// Turn on read lock back.
 				as.RLock()
 			}
 		}
