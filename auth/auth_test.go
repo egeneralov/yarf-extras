@@ -70,7 +70,7 @@ func TestConcurrentAccess(t *testing.T) {
             RefreshToken(token)
             DeleteToken(token)
             
-            time.Sleep(2 * time.Second)
+            time.Sleep(5 * time.Second)
         }()
     }
     
