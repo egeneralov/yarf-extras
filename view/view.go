@@ -80,7 +80,11 @@ func (v *View) Render(route string, c *yarf.Context) error {
 
 	// Check if main template exists and if it's a file
 	if info, err := os.Stat(path.Join(v.Views, path.Dir(route), tplName)); err != nil || info.IsDir() {
-		return yarf.ErrorNotFound()
+	    // Try to render custom 404 page
+    	c.Response.WriteHeader(404)
+    
+    	// Render 404
+    	return v.Render("/404", c)
 	}
 
 	// Use cache
