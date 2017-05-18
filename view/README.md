@@ -1,0 +1,1 @@
+# View resource to render public files and/or views/templates. 
