@@ -10,21 +10,21 @@ import (
 // Internal Storage object
 var store Storage
 
-// Init storage using the internal package version. 
+// Init storage using the internal package version.
 // Can be overwritten by calling RegisterStorage(s Storage) at any time.
 func init() {
 	if store == nil {
-		store = &authStorage {
-		    store: make(map[string]authToken),
+		store = &authStorage{
+			store: make(map[string]authToken),
 		}
 	}
 }
 
-// RegisterStorage replaces the default storage engine by a custom one. 
-// Replacing the storage means all data stored previously will be lost, so it should be done during initialization. 
-// Takes a Storage interface parameter and isn't safe for concurrent access. 
+// RegisterStorage replaces the default storage engine by a custom one.
+// Replacing the storage means all data stored previously will be lost, so it should be done during initialization.
+// Takes a Storage interface parameter and isn't safe for concurrent access.
 func RegisterStorage(s Storage) {
-    store = s
+	store = s
 }
 
 // generateToken creates a new random token long enough to avoid collisions.
@@ -47,17 +47,17 @@ func generateToken() string {
 // It should be used from a Login method after a successful authentication.
 func NewToken(data string, d int) string {
 	t := generateToken()
-	
+
 	// Check non-existence of the new token
 	_, check := store.Get(t)
 	for check == nil {
-	    t = generateToken()
-	    _, check = store.Get(t)
+		t = generateToken()
+		_, check = store.Get(t)
 	}
-	
+
 	// Save data
 	store.Set(t, data, d)
-	
+
 	return t
 }
 
@@ -83,16 +83,16 @@ func GetToken(r *http.Request) string {
 // ValidateToken checks if a token is valid and returns the data contained on it.
 // Otherwise it will return an error status together with an empty string.
 func ValidateToken(token string) (string, error) {
-    return store.Get(token)
+	return store.Get(token)
 }
 
 // RefreshToken resets the timer of the token to extend its valid status.
 // It sets the same duration time as when it was created, but starting now.
 func RefreshToken(token string) {
-    store.Refresh(token)
+	store.Refresh(token)
 }
 
 // DeleteToken removes the token data from the storage.
 func DeleteToken(token string) {
-    store.Del(token)
+	store.Del(token)
 }

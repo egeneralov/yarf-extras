@@ -1,53 +1,53 @@
 package auth
 
 import (
-    "sync"
-    "sync/atomic"
-    "time"
+	"sync"
+	"sync/atomic"
+	"time"
 )
 
-// Storage interface is used to register any custom storage system for auth module. 
+// Storage interface is used to register any custom storage system for auth module.
 type Storage interface {
-    // Get returns the data for a given key or an error if the key isn't valid.
-    Get(key string) (string, error)
-    
-    // Set stores the data for a key for a given duration in seconds.
-    // Returns error if it fails. 
-    Set(key, data string, duration int) error
-    
-    // Refresh extends the expiration of a key by the same time it had when it was created. 
-    Refresh(key string) error
-    
-    // Del removes the data and invalidates a key.
-    // Returns error if it fails.
-    Del(key string) error
+	// Get returns the data for a given key or an error if the key isn't valid.
+	Get(key string) (string, error)
+
+	// Set stores the data for a key for a given duration in seconds.
+	// Returns error if it fails.
+	Set(key, data string, duration int) error
+
+	// Refresh extends the expiration of a key by the same time it had when it was created.
+	Refresh(key string) error
+
+	// Del removes the data and invalidates a key.
+	// Returns error if it fails.
+	Del(key string) error
 }
 
-// authToken is the storage unit used for auth module. 
+// authToken is the storage unit used for auth module.
 type authToken struct {
 	data       string    // Any data you want to save for this token.
 	duration   int       // Seconds. Stored to be used by the RefreshToken function.
 	expiration time.Time // Expiration time calculated after duration
 }
 
-// authStorage is the internal implementation for Storage interface. 
+// authStorage is the internal implementation for Storage interface.
 // It uses a in-memory map to store auth data.
 type authStorage struct {
 	// Data store
 	store map[string]authToken
-    
-    // Garbage collector running? 
-    gcFlag int64
-    
+
+	// Garbage collector running?
+	gcFlag int64
+
 	// Sync Mutex
 	sync.RWMutex
 }
 
 // authStorage's garbage collector
 func (as *authStorage) gc() {
-    // Set running flag
-    atomic.StoreInt64(&as.gcFlag, 1)
-    
+	// Set running flag
+	atomic.StoreInt64(&as.gcFlag, 1)
+
 	// Run every minute.
 	t := time.NewTicker(1 * time.Minute)
 
@@ -60,12 +60,12 @@ func (as *authStorage) gc() {
 
 		// Check for expired storage entries.
 		now := time.Now()
-        
-        // Full lock during GC
+
+		// Full lock during GC
 		as.Lock()
 		for key, data := range as.store {
 			if now.After(data.expiration) {
-			    delete(as.store, key)
+				delete(as.store, key)
 			}
 		}
 		as.Unlock()
@@ -74,16 +74,16 @@ func (as *authStorage) gc() {
 
 // Get data from storage
 func (as *authStorage) Get(key string) (string, error) {
-    as.RLock()
+	as.RLock()
 	defer as.RUnlock()
 
-    // Return data if available
+	// Return data if available
 	if data, ok := as.store[key]; ok {
 		if data.expiration.After(time.Now()) {
 			return data.data, nil
 		}
 	}
-	
+
 	// Key not found
 	return "", InvalidKeyError{}
 }
@@ -92,35 +92,35 @@ func (as *authStorage) Get(key string) (string, error) {
 func (as *authStorage) Set(key, data string, duration int) error {
 	// Calculate expiration time
 	exp := time.Now().Add(time.Duration(duration) * time.Second)
-	
+
 	as.Lock()
 	defer as.Unlock()
-	
+
 	// Save data
 	as.store[key] = authToken{data: data, duration: duration, expiration: exp}
-	
-	// Init GC if not running yet. 
+
+	// Init GC if not running yet.
 	// Write lock comes handy here.
 	if atomic.LoadInt64(&as.gcFlag) == 0 {
-	    go as.gc()
+		go as.gc()
 	}
-	
+
 	return nil
 }
 
 // Refresh expiration
 func (as *authStorage) Refresh(key string) error {
-    as.Lock()
+	as.Lock()
 	defer as.Unlock()
-	
+
 	if data, ok := as.store[key]; ok {
-	    // Validate expiration. Expired tokens can't be refreshed.
+		// Validate expiration. Expired tokens can't be refreshed.
 		if data.expiration.After(time.Now()) {
 			data.expiration = time.Now().Add(time.Duration(data.duration) * time.Second)
 			as.store[key] = data
 		}
 	}
-	
+
 	return nil
 }
 
@@ -128,8 +128,8 @@ func (as *authStorage) Refresh(key string) error {
 func (as *authStorage) Del(key string) error {
 	as.Lock()
 	defer as.Unlock()
-	
+
 	delete(as.store, key)
-	
+
 	return nil
 }

@@ -19,18 +19,18 @@ import (
 // View is a yarf.Resource object that renders templates based on the request path.
 type View struct {
 	yarf.Resource
-    
-    // Public files root path
-    Public     string
-    
-    // Views root path
-	Views      string
-	
+
+	// Public files root path
+	Public string
+
+	// Views root path
+	Views string
+
 	// View components root path
 	Components string
 	Debug      bool
-    
-    // Cache in-memory storage
+
+	// Cache in-memory storage
 	cache map[string]*bytes.Buffer
 
 	sync.RWMutex
@@ -40,7 +40,7 @@ type View struct {
 // Returns a new *View object properly configured.
 func New(p, v, c string) *View {
 	return &View{
-	    Public:     p,
+		Public:     p,
 		Views:      v,
 		Components: c,
 		cache:      make(map[string]*bytes.Buffer),
@@ -49,7 +49,7 @@ func New(p, v, c string) *View {
 
 // Get implements yarf.Resource.Get() method to write a public file or a view to the response.
 func (v *View) Get(c *yarf.Context) error {
-    // Try to render public file
+	// Try to render public file
 	// Construct path
 	p := path.Join(v.Public, c.Request.URL.EscapedPath())
 
@@ -57,19 +57,19 @@ func (v *View) Get(c *yarf.Context) error {
 	if info, err := os.Stat(p); err == nil && !info.IsDir() {
 		// Set cache headers before http.ServeFile
 		c.Response.Header().Set("Cache-Control", "public, max-age=86400")
-        
-        // Render static file
+
+		// Render static file
 		http.ServeFile(c.Response, c.Request, p)
 		return nil
 	}
-    
-    // Fallback to view rendering
+
+	// Fallback to view rendering
 	return v.Render(c.Request.URL.EscapedPath(), c)
 }
 
 // Render writes a template to the response based on the request path.
 // All components are available to use inside any template.
-// If v.Debug == true, all templates and components are parsed every time, 
+// If v.Debug == true, all templates and components are parsed every time,
 // otherwise it will cache the first parse for all further requests.
 func (v *View) Render(route string, c *yarf.Context) error {
 	// Figure out template name
@@ -80,11 +80,11 @@ func (v *View) Render(route string, c *yarf.Context) error {
 
 	// Check if main template exists and if it's a file
 	if info, err := os.Stat(path.Join(v.Views, path.Dir(route), tplName)); err != nil || info.IsDir() {
-	    // Try to render custom 404 page
-    	c.Response.WriteHeader(404)
-    
-    	// Render 404
-    	return v.Render("/404", c)
+		// Try to render custom 404 page
+		c.Response.WriteHeader(404)
+
+		// Render 404
+		return v.Render("/404", c)
 	}
 
 	// Use cache

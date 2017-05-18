@@ -42,15 +42,15 @@ type RateLimiter struct {
 	rl *RateLimit
 }
 
-// YarfMiddleware constructor receives the requests limit and a time window (in seconds) to allow. 
-// Any IP that requests more than the limit within the time window will be blocked until the time window ends and a new one starts.  
+// YarfMiddleware constructor receives the requests limit and a time window (in seconds) to allow.
+// Any IP that requests more than the limit within the time window will be blocked until the time window ends and a new one starts.
 func YarfMiddleware(limit, window int) *RateLimiter {
 	return &RateLimiter{
 		rl: New(limit, window),
 	}
 }
 
-// PreDispatch performs the requests counting and handle blocks/ 
+// PreDispatch performs the requests counting and handle blocks/
 func (m *RateLimiter) PreDispatch(c *yarf.Context) error {
 	// IP as key
 	key := c.GetClientIP()
