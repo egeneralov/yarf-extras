@@ -5,6 +5,10 @@ import (
 	"github.com/yarf-framework/extras/auth"
 )
 
+var (
+	keyPrefix = "github.com/yarf-framework/extras/auth/storage/memcache:"
+)
+
 type memcacheStorage struct {
 	client *memcache.Client
 }
@@ -16,9 +20,13 @@ func Memcache(servers ...string) auth.Storage {
 	return ms
 }
 
+func key(k string) string {
+	return keyPrefix + k
+}
+
 // Get data from storage
-func (ms *memcacheStorage) Get(key string) (val string, err error) {
-	item, err := ms.client.Get(key)
+func (ms *memcacheStorage) Get(k string) (val string, err error) {
+	item, err := ms.client.Get(key(k))
 	if err != nil {
 		if err == memcache.ErrCacheMiss {
 			err = auth.InvalidKeyError{}
@@ -30,17 +38,17 @@ func (ms *memcacheStorage) Get(key string) (val string, err error) {
 }
 
 // Set data to storage.
-func (ms *memcacheStorage) Set(key, data string, duration int) error {
+func (ms *memcacheStorage) Set(k, data string, duration int) error {
 	return ms.client.Set(&memcache.Item{
-		Key:        key,
+		Key:        key(k),
 		Value:      []byte(data),
 		Expiration: int32(duration),
 	})
 }
 
 // Refresh expiration
-func (ms *memcacheStorage) Refresh(key string) error {
-	item, err := ms.client.Get(key)
+func (ms *memcacheStorage) Refresh(k string) error {
+	item, err := ms.client.Get(key(k))
 	if err != nil {
 		if err == memcache.ErrCacheMiss {
 			err = auth.InvalidKeyError{}
@@ -56,6 +64,6 @@ func (ms *memcacheStorage) Refresh(key string) error {
 }
 
 // Delete data to storage.
-func (ms *memcacheStorage) Del(key string) error {
-	return ms.client.Delete(key)
+func (ms *memcacheStorage) Del(k string) error {
+	return ms.client.Delete(key(k))
 }
