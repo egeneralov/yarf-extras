@@ -72,8 +72,6 @@ func (ms *memcacheStorage) setExpiration(k string, duration int) {
 	data := new(bytes.Buffer)
 	binary.Write(data, binary.LittleEndian, duration)
 
-	//binary.PutVarint(data, int64(duration))
-
 	ms.client.Set(&memcache.Item{
 		Key:        expirationKey(k),
 		Value:      data.Bytes(),
