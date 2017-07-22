@@ -47,6 +47,26 @@ func TestValidateToken(t *testing.T) {
 	}
 }
 
+func TestInvalidateValidateToken(t *testing.T) {
+	token := auth.NewToken("invalidateThis", 2)
+
+	time.Sleep(3 * time.Second)
+	_, err := auth.ValidateToken(token)
+	if err == nil {
+		t.Error("Token didn't expired")
+	}
+
+	// Now check refresh invalidation
+	token = auth.NewToken("invalidateAfterRefresh", 2)
+	auth.RefreshToken(token)
+
+	time.Sleep(3 * time.Second)
+	_, err = auth.ValidateToken(token)
+	if err == nil {
+		t.Error("Token didn't expired after refresh")
+	}
+}
+
 func TestDeleteToken(t *testing.T) {
 	id := "someid"
 	token := auth.NewToken(id, 5)

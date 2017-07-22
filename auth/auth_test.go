@@ -41,6 +41,26 @@ func TestValidateToken(t *testing.T) {
 	}
 }
 
+func TestInvalidateValidateToken(t *testing.T) {
+	token := NewToken("invalidateThis", 2)
+
+	time.Sleep(3 * time.Second)
+	_, err := ValidateToken(token)
+	if err == nil {
+		t.Error("Token didn't expired")
+	}
+
+	// Now check refresh invalidation
+	token = NewToken("invalidateAfterRefresh", 2)
+	RefreshToken(token)
+
+	time.Sleep(3 * time.Second)
+	_, err = ValidateToken(token)
+	if err == nil {
+		t.Error("Token didn't expired after refresh")
+	}
+}
+
 func TestDeleteToken(t *testing.T) {
 	id := "someid"
 	token := NewToken(id, 5)
